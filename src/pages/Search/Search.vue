@@ -1,10 +1,6 @@
 <template>
   <section class="search">
-    <header class="header">
-      <a class="header_title">
-        <span class="header_title_text">搜索</span>
-      </a>
-    </header>
+    <HeaderTop title="搜索"/>
     <form action="#" class="search_form">
       <input type="search" placeholder="请输入商家或美食名称" name="search">
       <input type="submit" name="submit" class="search_submmit">
@@ -13,7 +9,13 @@
 </template>
 
 <script>
-export default {};
+import HeaderTop from "../../components/HeaderTop/HeaderTop";
+
+export default {
+  components: {
+    HeaderTop
+  }
+};
 </script>
 
 <style lang="stylus">
@@ -48,7 +50,7 @@ export default {};
     .list_container
       background-color #ffffff
   .search_none
-    margin 0 auto 
+    margin 0 auto
     color #333
     background-color #ffffff
     text-align center

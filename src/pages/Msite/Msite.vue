@@ -1,71 +1,110 @@
 <template>
   <section class="msite">
     <!-- 首页头部 -->
-    <header class="header">
-      <span class="header_search">
-        <i class="iconfont icon-sousuo"></i>
-      </span>
-      <span class="header_title">
-        <span class="header_title_text ellipsis">广州</span>
-      </span>
-      <span class="header_login">
-        <span class="header_login_text">登录|注册</span>
-      </span>
-    </header>
-    <!-- 首页导航 -->
+    <HeaderTop :title="address.name">
+      <slot name="left">
+        <span class="header_search">
+          <i class="iconfont icon-sousuo"></i>
+        </span>
+      </slot>
+      <slot name="right">
+        <span class="header_login">
+          <span class="header_login_text">登录|注册</span>
+        </span>
+      </slot>
+    </HeaderTop>
+
+    <!-- 首页导航轮播图 -->
     <nav class="msite_nav">
+      <!-- Swiper容器层 -->
       <div class="swiper-container">
+        <!-- Swiper包裹层 -->
         <div class="swiper-wrapper">
-          <div class="swiper-slide">
-            <a href="javascript:;" class="link_to_food">
+          <!-- 轮播div -->
+          <div class="swiper-slide" v-for="(categorys, index) in categorysArr" :key="index">
+            <a
+              href="javascript:;"
+              class="link_to_food"
+              v-for="(category, index) in categorys"
+              :key="index"
+            >
               <div class="food_container">
-                <img src="./images/nav/1.png" alt>
+                <img :src="baseImageUrl+category.image_url">
               </div>
-              <span>甜品饮片</span>
-            </a>
-            <a href="javascript:;" class="link_to_food">
-              <div class="food_container">
-                <img src="./images/nav/1.png" alt>
-              </div>
-              <span>甜品饮片</span>
-            </a>
-            <a href="javascript:;" class="link_to_food">
-              <div class="food_container">
-                <img src="./images/nav/1.png" alt>
-              </div>
-              <span>甜品饮片</span>
+              <span>{{category.title}}</span>
             </a>
           </div>
         </div>
       </div>
+      <!-- 轮播图小圆点 -->
+      <div class="swiper-pagination"></div>
     </nav>
     <!-- 首页附近商家 -->
-    <div class="msite_shop_list">
-      <div class="shop_header">
-        <i class="iconfont icon-xuanxiang">
-          <span class="shop_header_title">附近商家</span>
-        </i>
-      </div>
-      <div class="shop_container">
-        <ul class="shop_list">
-          <li class="shop_li border-1px">
-            <a>
-              <div class="shop_left">
-                <img src="./images/shop/1.png" alt class="shop_img">
-              </div>
-              <div class="shop_right">
-                <section class="shop_detail_header"></section>
-              </div>
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
+    <ShopList></ShopList>
   </section>
 </template>
 
 <script>
-export default {};
+import HeaderTop from "../../components/HeaderTop/HeaderTop.vue";
+import ShopList from "../../components/ShopList/ShopList.vue";
+import Swiper from "swiper";
+import "swiper/dist/css/swiper.min.css";
+import { mapState, mapActions } from "vuex";
+export default {
+  data() {
+    return {
+      baseImageUrl: "https://fuss10.elemecdn.com"
+    };
+  },
+  mounted() {
+    this.getCategorys();
+    this.getShops();
+  },
+  methods: {
+    ...mapActions(["getCategorys", "getShops"])
+  },
+  computed: {
+    ...mapState(["address", "categorys", "shops"]),
+
+    categorysArr() {
+      const { categorys } = this;
+      let slideArr = [];
+      let contentArr = [];
+      for (let index = 0; index < categorys.length; index++) {
+        const element = categorys[index];
+        if (contentArr.length === 8) {
+          contentArr = [];
+        }
+        if (contentArr.length === 0) {
+          slideArr.push(contentArr);
+        }
+        contentArr.push(element);
+      }
+      return slideArr;
+    }
+  },
+  components: {
+    HeaderTop,
+    ShopList
+  },
+  watch: {
+    categorys(value) {
+      // categorys数组中有数据了，在异步更新界面之前执行
+      // 希望界面更新就立即创建swiper对象
+      this.$nextTick(() => {
+        // 一旦界面更新立即调用(要写在数据更新之后)
+        // 创建一个swiper实例对象实现轮播
+        new Swiper(".swiper-container", {
+          loop: true, // 循环轮播
+          // 如果需要分页器
+          pagination: {
+            el: ".swiper-pagination"
+          }
+        });
+      });
+    }
+  }
+};
 </script>
 
 <style lang="stylus">

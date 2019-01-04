@@ -1,5 +1,6 @@
 <template>
   <section class="order">
+    <header-top title="订单"/>
     <section class="order_no_login">
       <img src="./images/person.png" alt>
       <h3>登陆后查看外卖订单</h3>
@@ -10,7 +11,13 @@
 </template>
 
 <script>
-export default {};
+import HeaderTop from "../../components/HeaderTop/HeaderTop";
+
+export default {
+  components: {
+    HeaderTop
+  }
+};
 </script>
 
 <style lang="stylus">
